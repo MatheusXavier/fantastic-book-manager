@@ -9,4 +9,21 @@ public abstract class BaseEntity<TId>
         get { return _id; }
         protected set { _id = value; }
     }
+
+    public override bool Equals(object? obj)
+    {
+        var compareTo = obj as BaseEntity<TId>;
+
+        if (ReferenceEquals(this, compareTo))
+        {
+            return true;
+        }
+
+        if (compareTo is null)
+        {
+            return false;
+        }
+
+        return Id.Equals(compareTo.Id);
+    }
 }

@@ -6,6 +6,8 @@ namespace Book.Application.Books.CreateBook;
 
 public record CreateBookCommand : BaseCommand
 {
+    public Guid Id { get; }
+
     public string Title { get; }
 
     public string Author { get; }
@@ -14,6 +16,7 @@ public record CreateBookCommand : BaseCommand
 
     public CreateBookCommand(string title, string author, string genre)
     {
+        Id = Guid.NewGuid();
         Title = title;
         Author = author;
         Genre = genre;

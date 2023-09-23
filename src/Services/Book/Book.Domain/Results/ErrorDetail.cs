@@ -27,4 +27,22 @@ public class ErrorDetail
         _errorItems.Add(errorItem);
         return this;
     }
+
+    public override bool Equals(object? obj)
+    {
+        var compareTo = obj as ErrorDetail;
+
+        if (ReferenceEquals(this, compareTo))
+        {
+            return true;
+        }
+
+        if (compareTo is null)
+        {
+            return false;
+        }
+
+        return Status.Equals(compareTo.Status) &&
+            Message.Equals(compareTo.Message);
+    }
 }
