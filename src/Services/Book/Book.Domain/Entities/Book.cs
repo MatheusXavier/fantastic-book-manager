@@ -10,14 +10,18 @@ public class Book : BaseEntity<Guid>
 
     public string Genre { get; private set; }
 
-    public Book(Guid id, string title, string author, string genre)
+    public Guid UserId { get; private set; }
+
+    public Book(Guid id, Guid userId, string title, string author, string genre)
     {
         Guard.Against.Default(id, nameof(id));
+        Guard.Against.Default(userId, nameof(userId));
         Guard.Against.NullOrWhiteSpace(title, nameof(title));
         Guard.Against.NullOrWhiteSpace(author, nameof(author));
         Guard.Against.NullOrWhiteSpace(genre, nameof(genre));
 
         Id = id;
+        UserId = userId;
         Title = title;
         Author = author;
         Genre = genre;

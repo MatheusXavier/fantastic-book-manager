@@ -79,8 +79,12 @@ public class CreateBookCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var command = new CreateBookCommand("book title", "book author", "book genre");
-        var book = new Book.Domain.Entities.Book(command.Id, command.Title, command.Author, command.Genre);
-
+        var book = new Book.Domain.Entities.Book(
+            command.Id,
+            userId,
+            command.Title,
+            command.Author,
+            command.Genre);
 
         _errorHandler
             .MockValidateCommand(command, isValid: true);

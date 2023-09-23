@@ -40,7 +40,12 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand>
             return;
         }
 
-        var book = new Domain.Entities.Book(request.Id, request.Title, request.Author, request.Genre);
+        var book = new Domain.Entities.Book(
+            request.Id,
+            _loggedUser.Id,
+            request.Title,
+            request.Author,
+            request.Genre);
 
         await _bookRepository.AddBookAsync(book);
     }
