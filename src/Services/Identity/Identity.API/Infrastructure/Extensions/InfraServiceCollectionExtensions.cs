@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 using NetDevPack.Identity.Jwt;
 
@@ -8,6 +9,9 @@ public static class InfraServiceCollectionExtensions
 {
     public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services
+            .AddMemoryCache();
+
         // Add default EF Context for Identity from 'NetDevPack.Identity'
         services
             .AddIdentityEntityFrameworkContextConfiguration(o =>
@@ -21,7 +25,9 @@ public static class InfraServiceCollectionExtensions
         services.AddIdentityConfiguration();
 
         // Add default JWT configuration from 'NetDevPack.Identity'
-        services.AddJwtConfiguration(configuration, "IdentitySettings");
+        services
+            .AddJwtConfiguration(configuration)
+            .AddNetDevPackIdentity<IdentityUser>();
 
         return services;
     }

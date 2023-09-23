@@ -2,9 +2,8 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
-using NetDevPack.Identity.Jwt;
+using NetDevPack.Identity.Interfaces;
 using NetDevPack.Identity.Jwt.Model;
 using NetDevPack.Identity.Model;
 
@@ -16,16 +15,16 @@ public class AccountController : MainController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly AppJwtSettings _appJwtSettings;
+    private readonly IJwtBuilder _jwtBuilder;
 
     public AccountController(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        IOptions<AppJwtSettings> appJwtSettings)
+        IJwtBuilder jwtBuilder)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _appJwtSettings = appJwtSettings.Value;
+        _jwtBuilder = jwtBuilder;
     }
 
     [HttpPost]
@@ -50,7 +49,7 @@ public class AccountController : MainController
 
         if (result.Succeeded)
         {
-            return Ok(GenerateJwtToken(user.Email));
+            return Ok(await GenerateJwtToken(user.Email));
         }
 
         foreach (IdentityError error in result.Errors)
@@ -77,7 +76,7 @@ public class AccountController : MainController
 
         if (result.Succeeded)
         {
-            return Ok(GenerateJwtToken(loginUser.Email));
+            return Ok(await GenerateJwtToken(loginUser.Email));
         }
 
         if (result.IsLockedOut)
@@ -90,11 +89,9 @@ public class AccountController : MainController
         return CustomResponse();
     }
 
-    private UserResponse GenerateJwtToken(string email)
+    private async Task<UserResponse> GenerateJwtToken(string email)
     {
-        return new JwtBuilder()
-            .WithUserManager(_userManager)
-            .WithJwtSettings(_appJwtSettings)
+        return await _jwtBuilder
             .WithEmail(email)
             .WithJwtClaims()
             .WithUserClaims()
