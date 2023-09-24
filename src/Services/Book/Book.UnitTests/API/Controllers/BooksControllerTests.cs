@@ -1,5 +1,6 @@
 ﻿using Book.API.Controllers;
 using Book.Application.Books.CreateBook;
+using Book.Application.Books.DeleteBook;
 using Book.Domain.Results;
 using Book.UnitTests.Application.Mocks;
 using Book.UnitTests.Infrastructure.Mocks;
@@ -68,6 +69,62 @@ public class BooksControllerTests
 
         // Act
         IActionResult result = await _bookController.CreateBookAsync(command);
+
+        // Assert
+        result.Should().BeEquivalentTo(new OkResult());
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task DeleteBookAsync_GettingSomeError_ReturnError()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var command = new DeleteBookCommand(bookId);
+
+        var errorMessage = new ErrorMessage(
+               "internalerror",
+               "The server encountered an unexpected condition that prevented it from fulfilling the request");
+        var error = new ErrorDetail(StatusCodes.Status500InternalServerError, errorMessage);
+        var errorResult = new ErrorResult(error);
+
+        _errorHandler
+            .MockHasError(true)
+            .MockGetError(errorResult);
+
+        _mediatorHandler
+            .MockSend(command);
+
+        // Act
+        IActionResult result = await _bookController.DeleteBookAsync(bookId);
+
+        // Assert
+        result.Should().BeEquivalentTo(new ObjectResult(errorResult)
+        {
+            StatusCode = StatusCodes.Status500InternalServerError
+        });
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task DeleteBookAsync_Success_ReturnOk()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var command = new DeleteBookCommand(bookId);
+
+        _errorHandler
+            .MockHasError(false);
+
+        _mediatorHandler
+            .MockSend(command);
+
+        // Act
+        IActionResult result = await _bookController.DeleteBookAsync(bookId);
 
         // Assert
         result.Should().BeEquivalentTo(new OkResult());
