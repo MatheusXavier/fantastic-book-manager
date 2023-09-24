@@ -27,5 +27,15 @@ public abstract class MainController : ControllerBase
         };
     }
 
+    protected IActionResult Error(ErrorDetail errorDetail)
+    {
+        var errorResult = new ErrorResult(errorDetail);
+
+        return new ObjectResult(errorResult)
+        {
+            StatusCode = errorResult.Error.Status,
+        };
+    }
+
     protected bool IsSuccess() => !_errorHandler.HasError();
 }

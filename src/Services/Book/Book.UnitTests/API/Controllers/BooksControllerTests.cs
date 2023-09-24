@@ -1,6 +1,7 @@
 ﻿using Book.API.Controllers;
 using Book.Application.Books.CreateBook;
 using Book.Application.Books.DeleteBook;
+using Book.Application.Books.UpdateBook;
 using Book.Domain.Results;
 using Book.UnitTests.Application.Mocks;
 using Book.UnitTests.Infrastructure.Mocks;
@@ -125,6 +126,52 @@ public class BooksControllerTests
 
         // Act
         IActionResult result = await _bookController.DeleteBookAsync(bookId);
+
+        // Assert
+        result.Should().BeEquivalentTo(new OkResult());
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task UpdateBookAsync_IdFromRouterIsDifferentFromBody_ReturnError()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var command = new UpdateBookCommand(Guid.NewGuid(), "title", "author", "genre");
+
+        var errorMessage = new ErrorMessage("bookidmismatch", "The route and body id are not the same");
+        var error = new ErrorDetail(StatusCodes.Status400BadRequest, errorMessage);
+        var errorResult = new ErrorResult(error);
+
+        // Act
+        IActionResult result = await _bookController.UpdateBookAsync(bookId, command);
+
+        // Assert
+        result.Should().BeEquivalentTo(new ObjectResult(errorResult)
+        {
+            StatusCode = StatusCodes.Status400BadRequest
+        });
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task UpdateBookAsync_GettingSomeError_ReturnError()
+    {
+        // Arrange
+        var command = new UpdateBookCommand(Guid.NewGuid(), "title", "author", "genre");
+
+        _errorHandler
+            .MockHasError(false);
+
+        _mediatorHandler
+            .MockSend(command);
+
+        // Act
+        IActionResult result = await _bookController.UpdateBookAsync(command.Id, command);
 
         // Assert
         result.Should().BeEquivalentTo(new OkResult());

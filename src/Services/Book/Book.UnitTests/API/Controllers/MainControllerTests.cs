@@ -92,6 +92,29 @@ public class MainControllerTests
         _errorHandler.VerifyAll();
     }
 
+    [Fact]
+    public void Error_SendingError_ReturnErrorWithCorrectStatusCode()
+    {
+        // Arrange
+        var errorMessage = new ErrorMessage("code", "description");
+        var errorDetail = new ErrorDetail(StatusCodes.Status500InternalServerError, errorMessage);
+
+        errorDetail.AddError(new ErrorItem("reason1", "message1"));
+        errorDetail.AddError(new ErrorItem("reason2", "message2"));
+        errorDetail.AddError(new ErrorItem("reason3", "message3"));
+
+        // Act
+        IActionResult result = _testController.Error(errorDetail);
+
+        // Assert
+        result.Should().BeEquivalentTo(new ObjectResult(new ErrorResult(errorDetail))
+        {
+            StatusCode = StatusCodes.Status500InternalServerError,
+        });
+
+        _errorHandler.VerifyAll();
+    }
+
     public class TestController : MainController
     {
         public TestController(IErrorHandler errorHandler) : base(errorHandler)
@@ -101,5 +124,7 @@ public class MainControllerTests
         public new bool IsSuccess() => base.IsSuccess();
 
         public new IActionResult Error() => base.Error();
+
+        public new IActionResult Error(ErrorDetail error) => base.Error(error);
     }
 }
