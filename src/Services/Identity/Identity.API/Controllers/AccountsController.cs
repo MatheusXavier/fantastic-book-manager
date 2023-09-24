@@ -11,13 +11,13 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Identity.API.Controllers;
 
-public class AccountController : MainController
+public class AccountsController : MainController
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IJwtBuilder _jwtBuilder;
 
-    public AccountController(
+    public AccountsController(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
         IJwtBuilder jwtBuilder)
@@ -27,8 +27,7 @@ public class AccountController : MainController
         _jwtBuilder = jwtBuilder;
     }
 
-    [HttpPost]
-    [Route("api/v1/accounts/register")]
+    [HttpPost("api/v1/accounts/register")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorData), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RegisterAsync(RegisterUser registerUser)
@@ -60,8 +59,7 @@ public class AccountController : MainController
         return CustomResponse();
     }
 
-    [HttpPost]
-    [Route("api/v1/accounts/login")]
+    [HttpPost("api/v1/accounts/login")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorData), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginAsync(LoginUser loginUser)

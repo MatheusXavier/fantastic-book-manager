@@ -1,10 +1,11 @@
+using Book.API.Extensions;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
 builder.Services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen();
+    .AddSwagger()
+    .AddAuthentication(builder.Configuration);
 
 WebApplication app = builder.Build();
 
