@@ -8,9 +8,9 @@ public class MockLoggedUser : Mock<ILoggedUser>
 {
     public MockLoggedUser() : base(MockBehavior.Strict) { }
 
-    public MockLoggedUser MockId(Guid id)
+    public MockLoggedUser MockGetUserId(Guid id)
     {
-        Setup(s => s.Id)
+        Setup(s => s.GetUserId())
             .Returns(id);
 
         return this;

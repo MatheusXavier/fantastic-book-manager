@@ -42,7 +42,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand>
 
         var book = new Domain.Entities.Book(
             request.Id,
-            _loggedUser.Id,
+            _loggedUser.GetUserId(),
             request.Title,
             request.Author,
             request.Genre);
@@ -52,7 +52,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand>
 
     private async Task<bool> UserAlreadyHasBookTitle(string bookTitle)
     {
-        int bookTitleCount = await _bookRepository.GetBooksCountByTitleAsync(bookTitle, _loggedUser.Id);
+        int bookTitleCount = await _bookRepository.GetBooksCountByTitleAsync(bookTitle, _loggedUser.GetUserId());
 
         return bookTitleCount > 0;
     }

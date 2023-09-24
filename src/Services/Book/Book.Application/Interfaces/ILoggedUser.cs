@@ -2,5 +2,5 @@
 
 public interface ILoggedUser
 {
-    public Guid Id { get; }
+    public Guid GetUserId();
 }

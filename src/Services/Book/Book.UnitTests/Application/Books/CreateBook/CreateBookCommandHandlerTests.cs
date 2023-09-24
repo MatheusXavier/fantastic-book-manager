@@ -59,7 +59,7 @@ public class CreateBookCommandHandlerTests
             .MockAdd(errorDetail);
 
         _loggedUser
-            .MockId(userId);
+            .MockGetUserId(userId);
 
         _bookRepository
             .MockGetBooksCountByTitleAsync(command.Title, userId, count: 1);
@@ -90,7 +90,7 @@ public class CreateBookCommandHandlerTests
             .MockValidateCommand(command, isValid: true);
 
         _loggedUser
-            .MockId(userId);
+            .MockGetUserId(userId);
 
         _bookRepository
             .MockGetBooksCountByTitleAsync(command.Title, userId, count: 0)
