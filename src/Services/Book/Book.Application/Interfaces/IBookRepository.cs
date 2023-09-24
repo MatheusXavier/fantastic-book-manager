@@ -1,4 +1,6 @@
-﻿namespace Book.Application.Interfaces;
+﻿using Book.Application.Books.Models;
+
+namespace Book.Application.Interfaces;
 
 public interface IBookRepository
 {
@@ -13,4 +15,6 @@ public interface IBookRepository
     Task<Domain.Entities.Book?> GetBookAsync(Guid bookId);
 
     Task UpdateBookAsync(Domain.Entities.Book book);
+
+    Task<List<BookDto>> GetBooksByUserAsync(Guid userId);
 }

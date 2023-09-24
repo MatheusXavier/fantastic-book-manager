@@ -1,4 +1,5 @@
-﻿using Book.Application.Interfaces;
+﻿using Book.Application.Books.Models;
+using Book.Application.Interfaces;
 using Book.Infrastructure.Database.Factories;
 
 using Dapper;
@@ -94,5 +95,10 @@ public class BookRepository : IBookRepository
         using IDbConnection connection = _dbConnectionFactory.GetConnection();
 
         await connection.ExecuteAsync(query, book);
+    }
+
+    public Task<List<BookDto>> GetBooksByUserAsync(Guid userId)
+    {
+        throw new NotImplementedException();
     }
 }

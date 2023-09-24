@@ -1,4 +1,5 @@
-﻿using Book.Application.Interfaces;
+﻿using Book.Application.Books.Models;
+using Book.Application.Interfaces;
 
 using Moq;
 
@@ -52,6 +53,14 @@ public class MockBookRepository : Mock<IBookRepository>
     {
         Setup(s => s.UpdateBookAsync(book))
             .Returns(Task.CompletedTask);
+
+        return this;
+    }
+
+    public MockBookRepository MockGetBooksByUserAsync(Guid userId, List<BookDto> books)
+    {
+        Setup(s => s.GetBooksByUserAsync(userId))
+            .ReturnsAsync(books);
 
         return this;
     }
