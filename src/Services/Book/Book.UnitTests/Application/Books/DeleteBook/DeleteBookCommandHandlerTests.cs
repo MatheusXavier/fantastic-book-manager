@@ -43,7 +43,7 @@ public class DeleteBookCommandHandlerTests
     }
 
     [Fact]
-    public async void Handle_BookDoestNotExists_AddError()
+    public async void Handle_BookDoestNotExist_AddError()
     {
         // Arrange
         var userId = Guid.NewGuid();

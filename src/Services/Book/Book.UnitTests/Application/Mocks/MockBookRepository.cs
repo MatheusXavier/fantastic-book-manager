@@ -39,4 +39,20 @@ public class MockBookRepository : Mock<IBookRepository>
 
         return this;
     }
+
+    public MockBookRepository MockGetBookAsync(Guid bookId, Book.Domain.Entities.Book? book)
+    {
+        Setup(s => s.GetBookAsync(bookId))
+            .ReturnsAsync(book);
+
+        return this;
+    }
+
+    public MockBookRepository MockUpdateBookAsync(Book.Domain.Entities.Book book)
+    {
+        Setup(s => s.UpdateBookAsync(book))
+            .Returns(Task.CompletedTask);
+
+        return this;
+    }
 }

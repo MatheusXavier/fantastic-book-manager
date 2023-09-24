@@ -9,4 +9,8 @@ public interface IBookRepository
     Task<bool> BookExistsAsync(Guid bookId, Guid userId);
 
     Task DeleteBookAsync(Guid bookId);
+
+    Task<Domain.Entities.Book?> GetBookAsync(Guid bookId);
+
+    Task UpdateBookAsync(Domain.Entities.Book book);
 }

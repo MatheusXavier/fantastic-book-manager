@@ -69,4 +69,14 @@ public class BookRepository : IBookRepository
 
         await connection.ExecuteAsync(query, new { bookId });
     }
+
+    public Task<Domain.Entities.Book?> GetBookAsync(Guid bookId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateBookAsync(Domain.Entities.Book book)
+    {
+        throw new NotImplementedException();
+    }
 }
