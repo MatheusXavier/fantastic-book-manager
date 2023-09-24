@@ -6,7 +6,8 @@ Implementation of the [user story](#user-story) following the requirements:
 - Test-Driven Development (TDD) methodologies
 - Without using the entity framework
 - Create a user, login as the user, and
-ensure that the user information is stored in the database.
+ensure that the user information is stored in the database
+- Data layer & Business logic layer
 
 # User Story
 "As a user, I want to be able to manage a collection of books, including adding new books, updating book details, removing books, and viewing a list of all my books. Additionally, I want to have the ability to create an account, log in, and ensure that my book collection is private to me."
@@ -39,6 +40,11 @@ Users should be able to view a list of all their books, with book **title**, **a
 * [xUnit](https://github.com/xunit/xunit), [NetArchTest.Rules](https://github.com/BenMorris/NetArchTest), [Moq](https://github.com/moq) & [FluentAssertions](https://github.com/fluentassertions/fluentassertions)
 
 # Taken decisions
+* [Entity Framework](#entity-framework)
+* [User management / Security](#user-management--security)
+* [Using NetDevPack.Identity](#using-netdevpackidentity)
+* [Separation of Book and Identity API](#separation-of-book-and-identity-api)
+* [Command–query separation (CQS)](#command–query-separation-cqs)
 
 ## Entity Framework
 One of the [requirements](#fantastic-book-manager) was to not use the Entity Framework, so [Dapper](https://github.com/DapperLib/Dapper) was used, which has performance as one of its main features and allows us to write queries in raw SQL, but some tool would still be needed to manage changes to the database, so [DbUp](https://github.com/DbUp/DbUp) was chosen, allowing us to write changes to the database in SQL Scripts and [DbUp](https://github.com/DbUp/DbUp) tracks which SQL scripts have already been executed and executes the change scripts necessary to update our database.
@@ -61,3 +67,13 @@ As requested, some form of user authentication was necessary, for this we could 
 
 ## Using NetDevPack.Identity
 To implement the Identity API I chose to use the [NetDevPack.Identity](https://github.com/NetDevPack/Security.Identity) which is a library that already adds several basic implementations of [ASP.NET Identity](https://github.com/dotnet/AspNetCore/tree/main/src/Identity) such as JWT, Claims, Validation and other facilities, this helped **_save time_** and make the Identity API **_extremely simple_**.
+
+## Separation of Book and Identity API
+The Book API and the Identity API were separated because thinking about the design of a distributed system or even an application that goes to production, it makes sense to have an application responsible for managing the entire login and access part, imagining the possibility of this growing and have to take care of claims, roles, user management, etc.
+
+## Command–query separation (CQS)
+The [controller-service-repository](https://tom-collings.medium.com/controller-service-repository-16e29a4684e5) pattern is widely used and well known, in Clean Architecture we could use this pattern without any problems and the service would be responsible for the Business Logic Layer, however we chose to work with commands, this way we have the Use Cases much more obvious: **CreateBookCommand**, **DeleteBookCommand**.
+
+Adopting the [CQS (command-query separation)](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation) principle also makes it much easier to start working with [events](https://en.wikipedia.org/wiki/Event-driven_architecture), which can be extremely useful in scale scenarios and distributed systems.
+
+By separating the commands from the queries we have very well defined rules where it is clear that the commands will make changes to our database and that the queries will only read information without causing any changes, this allows a much more smoodie adoption of the [CQRS](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation), allowing queries to search for information from another database, which can be extremely useful in a scale scenario.
