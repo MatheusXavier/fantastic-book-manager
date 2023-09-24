@@ -9,6 +9,12 @@ Implementation of the [user story](#user-story) following the requirements:
 ensure that the user information is stored in the database
 - Data layer & Business logic layer
 
+# Summary
+- [User Story](#user-story)
+- [Technologies](#technologies)
+- [Taken decisions](#taken-decisions)
+- [Architecture overview](#architecture-overview)
+
 # User Story
 "As a user, I want to be able to manage a collection of books, including adding new books, updating book details, removing books, and viewing a list of all my books. Additionally, I want to have the ability to create an account, log in, and ensure that my book collection is private to me."
 
@@ -77,3 +83,20 @@ The [controller-service-repository](https://tom-collings.medium.com/controller-s
 Adopting the [CQS (command-query separation)](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation) principle also makes it much easier to start working with [events](https://en.wikipedia.org/wiki/Event-driven_architecture), which can be extremely useful in scale scenarios and distributed systems.
 
 By separating the commands from the queries we have very well defined rules where it is clear that the commands will make changes to our database and that the queries will only read information without causing any changes, this allows a much more smoodie adoption of the [CQRS](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation), allowing queries to search for information from another database, which can be extremely useful in a scale scenario.
+
+# Architecture overview
+The Book API was developed using clean architecture principles.
+
+![Clean Architecture](./docs/images/image.png)
+
+### Domain Layer
+This layer is represented in the image as **Entities**, in the system we call it **Book.Domain**, it will contain our business entities and other items that are the core of the system such as enums, exceptions, types and other items specific to the domain layer.
+
+### Application Layer
+This layer is represented in the image as **Use cases**, in the system we call it **Book.Application**, it will contain the behaviors of our system, there we can find our commands that are ways to well describe these behaviors. It is dependent on the domain layer, but has no dependencies on any other layer or project. This layer defines interfaces that are implemented by outside layers. For example, if the application needs to access the database, a new interface would be added to application and an implementation would be created within infrastructure.
+
+### Infrastructure Layer
+In the system we call it **Book.Infrastructure**, it contains responsible for accessing external resources such as file systems, data stores, and so on. This layer contains details, concrete implementations for repositories. The decoupling between the application layer and the infrastructure layer is what allows solution structures to change and/or add specific implementations as the project requirements change.
+
+### Presentation Layer
+In the system we call it **Book.API**, this layer essentially contains the I/O components of the system could be a mobile application, a web application, in our case it is a REST API. This layer depends on both the Application and Infrastructure layers, however, the dependency on Infrastructure is only to support dependency injection. Therefore only Program.cs should reference Infrastructure.
