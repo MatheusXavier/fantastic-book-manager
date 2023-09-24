@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "book-api",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "serviceActions": {
+        "identity-api": "StartDebugging",
+        "book-api": "StartDebugging",
+        "fbm-sqldata": "StartWithoutDebugging"
+      }
+    }
+  }
+}

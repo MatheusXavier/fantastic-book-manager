@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+
+  fbm-sqldata:
+    environment:
+        - SA_PASSWORD=Pass@word
+        - ACCEPT_EULA=Y
+    ports:
+        - "6433:1433"
+    volumes:
+        - fantastic-book-sqldata:/var/opt/mssql
+
+  book-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__BookDb=Server=fbm-sqldata;Database=book-db;User Id=sa;Password=Pass@word;Encrypt=false
+    ports:
+      - "13005:80"
+      - "13006:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__IdentityDb=Server=fbm-sqldata;Database=identity-db;User Id=sa;Password=Pass@word;Encrypt=false
+    ports:
+      - "14005:80"
+      - "14006:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+volumes:
+  fantastic-book-sqldata:
+    external: false

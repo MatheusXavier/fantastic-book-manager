@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  
+  fbm-sqldata:
+    container_name: fbm-sqldata
+    image: mcr.microsoft.com/mssql/server:2019-latest
+  
+  book-api:
+    container_name: book-api
+    image: ${DOCKER_REGISTRY-}book-api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Book/Book.API/Dockerfile
+    depends_on:
+      - fbm-sqldata
+
+  identity-api:
+    container_name: identity-api
+    image: ${DOCKER_REGISTRY-}identity-api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    depends_on:
+      - fbm-sqldata
+
