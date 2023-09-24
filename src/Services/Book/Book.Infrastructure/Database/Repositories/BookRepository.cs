@@ -27,6 +27,16 @@ public class BookRepository : IBookRepository
         await connection.ExecuteAsync(query, book);
     }
 
+    public Task<bool> BookExistsAsync(Guid bookId, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteBookAsync(Guid bookId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<int> GetBooksCountByTitleAsync(string title, Guid userId)
     {
         const string query = @"
@@ -42,31 +52,5 @@ public class BookRepository : IBookRepository
             title,
             userId,
         });
-    }
-
-    public async Task<bool> BookExistsAsync(Guid bookId, Guid userId)
-    {
-        const string query = @"
-            SELECT COUNT(*)
-            FROM [dbo].[Books]
-            WHERE [Id] = @bookId
-              AND [UserId] = @userId";
-
-        using IDbConnection connection = _dbConnectionFactory.GetConnection();
-
-        return (await connection.QueryFirstOrDefaultAsync<int>(query, new
-        {
-            bookId,
-            userId,
-        })) > 0;
-    }
-
-    public async Task DeleteBookAsync(Guid bookId)
-    {
-        const string query = @"DELETE FROM [dbo].[Books] WHERE [Id] = @bookId";
-
-        using IDbConnection connection = _dbConnectionFactory.GetConnection();
-
-        await connection.ExecuteAsync(query, new { bookId });
     }
 }
