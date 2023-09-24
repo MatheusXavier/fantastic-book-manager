@@ -98,4 +98,84 @@ public class BookRepositoryTests : BaseRepositoryTests
         // Assert
         result.Should().Be(1);
     }
+
+    [Fact]
+    public async Task BookExistsAsync_WithInexistentBook_ReturnFalse()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+
+        // Act
+        bool result = await _bookRepository.BookExistsAsync(bookId, userId);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task BookExistsAsync_IdExistButItBelongsToAnotherUser_ReturnFalse()
+    {
+        // Arrange
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        // Act
+        bool result = await _bookRepository.BookExistsAsync(book.Id, userId: Guid.NewGuid());
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task BookExistsAsync_IdExistAndtBelongsToUser_ReturnTrue()
+    {
+        // Arrange
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        // Act
+        bool result = await _bookRepository.BookExistsAsync(book.Id, book.UserId);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteBookAsync_WithExistentBook_ShouldNotExistAfterDelete()
+    {
+        // Arrange
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        // Act
+        await _bookRepository.DeleteBookAsync(book.Id);
+
+        // Assert
+        using IDbConnection connection = DbConnectionFactory.GetConnection();
+
+        const string query = "SELECT COUNT(*) FROM Books WHERE Id = @id";
+
+        int count = await connection.QueryFirstOrDefaultAsync<int>(query, new { book.Id });
+
+        count.Should().Be(0);
+    }
 }
