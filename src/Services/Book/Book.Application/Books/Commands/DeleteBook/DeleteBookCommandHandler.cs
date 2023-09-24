@@ -5,7 +5,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Book.Application.Books.DeleteBook;
+namespace Book.Application.Books.Commands.DeleteBook;
 
 public class DeleteBookCommandHandler : IRequestHandler<DeleteBookCommand>
 {

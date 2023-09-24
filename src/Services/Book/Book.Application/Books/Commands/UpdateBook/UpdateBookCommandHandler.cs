@@ -5,7 +5,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Book.Application.Books.UpdateBook;
+namespace Book.Application.Books.Commands.UpdateBook;
 
 public class UpdateBookCommandHandler : IRequestHandler<UpdateBookCommand>
 {

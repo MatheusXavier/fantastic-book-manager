@@ -2,7 +2,7 @@
 
 using FluentValidation.Results;
 
-namespace Book.Application.Books.DeleteBook;
+namespace Book.Application.Books.Commands.DeleteBook;
 
 public record DeleteBookCommand : BaseCommand
 {

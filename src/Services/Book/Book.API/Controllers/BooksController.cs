@@ -1,6 +1,6 @@
-﻿using Book.Application.Books.CreateBook;
-using Book.Application.Books.DeleteBook;
-using Book.Application.Books.UpdateBook;
+﻿using Book.Application.Books.Commands.CreateBook;
+using Book.Application.Books.Commands.DeleteBook;
+using Book.Application.Books.Commands.UpdateBook;
 using Book.Application.Interfaces;
 using Book.Domain.Results;
 

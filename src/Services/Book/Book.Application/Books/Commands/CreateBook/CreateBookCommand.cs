@@ -2,7 +2,7 @@
 
 using FluentValidation.Results;
 
-namespace Book.Application.Books.CreateBook;
+namespace Book.Application.Books.Commands.CreateBook;
 
 public record CreateBookCommand : BaseCommand
 {

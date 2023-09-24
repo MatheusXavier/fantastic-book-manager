@@ -2,7 +2,7 @@
 
 using FluentValidation.Results;
 
-namespace Book.Application.Books.UpdateBook;
+namespace Book.Application.Books.Commands.UpdateBook;
 
 public record UpdateBookCommand : BaseCommand
 {

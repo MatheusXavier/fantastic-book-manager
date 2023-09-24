@@ -1,19 +1,19 @@
-﻿using Book.Application.Books.DeleteBook;
+﻿using Book.Application.Books.Commands.CreateBook;
 using Book.Domain.Results;
 using Book.UnitTests.Application.Mocks;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Book.UnitTests.Application.Books.DeleteBook;
+namespace Book.UnitTests.Application.Books.Commands.CreateBook;
 
-public class DeleteBookCommandHandlerTests
+public class CreateBookCommandHandlerTests
 {
     private readonly MockBookRepository _bookRepository;
     private readonly MockLoggedUser _loggedUser;
     private readonly MockErrorHandler _errorHandler;
-    private readonly DeleteBookCommandHandler _handler;
+    private readonly CreateBookCommandHandler _handler;
 
-    public DeleteBookCommandHandlerTests()
+    public CreateBookCommandHandlerTests()
     {
         _bookRepository = new();
         _loggedUser = new();
@@ -28,7 +28,7 @@ public class DeleteBookCommandHandlerTests
     public async void Handle_InvalidCommand_DoNothing()
     {
         // Arrange
-        var command = new DeleteBookCommand(Guid.NewGuid());
+        var command = new CreateBookCommand("", "", "");
 
         _errorHandler
             .MockValidateCommand(command, isValid: false);
@@ -43,14 +43,16 @@ public class DeleteBookCommandHandlerTests
     }
 
     [Fact]
-    public async void Handle_BookDoestNotExist_AddError()
+    public async void Handle_UserAlreadyHasBookTitleRegistered_AddError()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var command = new DeleteBookCommand(Guid.NewGuid());
-        var errorDetail = new ErrorDetail(
-            StatusCodes.Status404NotFound,
-            new ErrorMessage("booknotfound", "Informed book does not exists"));
+        var command = new CreateBookCommand("book title", "book author", "book genre");
+
+        var errorMessage = new ErrorMessage(
+            Code: "useralreadyhasbooktitle",
+            Description: "User has already registered a book with this title");
+        var errorDetail = new ErrorDetail(StatusCodes.Status400BadRequest, errorMessage);
 
         _errorHandler
             .MockValidateCommand(command, isValid: true)
@@ -60,7 +62,7 @@ public class DeleteBookCommandHandlerTests
             .MockGetUserId(userId);
 
         _bookRepository
-            .MockBookExistsAsync(command.Id, userId, result: false);
+            .MockGetBooksCountByTitleAsync(command.Title, userId, count: 1);
 
         // Act
         await _handler.Handle(command, new CancellationToken());
@@ -72,11 +74,17 @@ public class DeleteBookCommandHandlerTests
     }
 
     [Fact]
-    public async void Handle_BookExists_DeleteIt()
+    public async void Handle_EverythingRight_CreateNewBook()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var command = new DeleteBookCommand(Guid.NewGuid());
+        var command = new CreateBookCommand("book title", "book author", "book genre");
+        var book = new Book.Domain.Entities.Book(
+            command.Id,
+            userId,
+            command.Title,
+            command.Author,
+            command.Genre);
 
         _errorHandler
             .MockValidateCommand(command, isValid: true);
@@ -85,8 +93,8 @@ public class DeleteBookCommandHandlerTests
             .MockGetUserId(userId);
 
         _bookRepository
-            .MockBookExistsAsync(command.Id, userId, result: true)
-            .MockDeleteBookAsync(command.Id);
+            .MockGetBooksCountByTitleAsync(command.Title, userId, count: 0)
+            .MockAddBookAsync(book);
 
         // Act
         await _handler.Handle(command, new CancellationToken());

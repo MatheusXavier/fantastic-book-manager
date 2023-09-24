@@ -1,10 +1,10 @@
-﻿using Book.Application.Books.UpdateBook;
+﻿using Book.Application.Books.Commands.UpdateBook;
 using Book.Domain.Results;
 using Book.UnitTests.Application.Mocks;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Book.UnitTests.Application.Books.UpdateBook;
+namespace Book.UnitTests.Application.Books.Commands.UpdateBook;
 
 public class UpdateBookCommandHandlerTests
 {

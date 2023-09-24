@@ -5,7 +5,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Book.Application.Books.CreateBook;
+namespace Book.Application.Books.Commands.CreateBook;
 
 public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand>
 {

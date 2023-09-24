@@ -1,8 +1,8 @@
-﻿using Book.Application.Books.CreateBook;
+﻿using Book.Application.Books.Commands.CreateBook;
 
 using FluentValidation.Results;
 
-namespace Book.UnitTests.Application.Books.CreateBook;
+namespace Book.UnitTests.Application.Books.Commands.CreateBook;
 
 public class CreateBookCommandTests
 {

@@ -1,15 +1,11 @@
 ﻿using FluentValidation;
 
-namespace Book.Application.Books.UpdateBook;
+namespace Book.Application.Books.Commands.CreateBook;
 
-public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
+public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 {
-    public UpdateBookCommandValidator()
+    public CreateBookCommandValidator()
     {
-        RuleFor(c => c.Id)
-            .NotEmpty()
-                .WithMessage("'{PropertyName}' must not be empty.");
-
         RuleFor(c => c.Title)
             .NotEmpty()
                 .WithMessage("'{PropertyName}' must not be empty.")
