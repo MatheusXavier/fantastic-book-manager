@@ -178,4 +178,72 @@ public class BookRepositoryTests : BaseRepositoryTests
 
         count.Should().Be(0);
     }
+
+    [Fact]
+    public async Task GetBookAsync_WithInexistentBook_ReturnNull()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+
+        // Act
+        Book.Domain.Entities.Book? book = await _bookRepository.GetBookAsync(bookId);
+
+        // Assert
+        book.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetBookAsync_WithExistentBook_ReturnNull()
+    {
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        // Act
+        Book.Domain.Entities.Book? foundedBook = await _bookRepository.GetBookAsync(book.Id);
+
+        // Assert
+        foundedBook.Should().NotBeNull();
+        foundedBook?.UserId.Should().Be(book.UserId);
+        foundedBook?.Title.Should().Be(book.Title);
+        foundedBook?.Author.Should().Be(book.Author);
+        foundedBook?.Genre.Should().Be(book.Genre);
+    }
+
+    [Fact]
+    public async Task UpdateBookAsync_WithExistentBook_UpdateValues()
+    {
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        book.Update("New Title", "New Author", "New Genre");
+
+        // Act
+        await _bookRepository.UpdateBookAsync(book);
+
+        // Assert
+        using IDbConnection connection = DbConnectionFactory.GetConnection();
+
+        const string query = "SELECT Id, UserId, Title, Author, Genre FROM Books WHERE Id = @id";
+
+        Book.Domain.Entities.Book foundedBook = await connection
+            .QueryFirstOrDefaultAsync<Book.Domain.Entities.Book>(query, new { book.Id });
+
+        foundedBook.Should().NotBeNull();
+        foundedBook.UserId.Should().Be(book.UserId);
+        foundedBook.Title.Should().Be("New Title");
+        foundedBook.Author.Should().Be("New Author");
+        foundedBook.Genre.Should().Be("New Genre");
+    }
 }

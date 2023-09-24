@@ -63,20 +63,36 @@ public class BookRepository : IBookRepository
 
     public async Task DeleteBookAsync(Guid bookId)
     {
-        const string query = @"DELETE FROM [dbo].[Books] WHERE [Id] = @bookId";
+        const string query = "DELETE FROM [dbo].[Books] WHERE [Id] = @bookId";
 
         using IDbConnection connection = _dbConnectionFactory.GetConnection();
 
         await connection.ExecuteAsync(query, new { bookId });
     }
 
-    public Task<Domain.Entities.Book?> GetBookAsync(Guid bookId)
+    public async Task<Domain.Entities.Book?> GetBookAsync(Guid bookId)
     {
-        throw new NotImplementedException();
+        const string query = @"SELECT Id, UserId, Title, Author, Genre 
+            FROM [dbo].[Books] 
+            WHERE [Id] = @bookId";
+
+        using IDbConnection connection = _dbConnectionFactory.GetConnection();
+
+        return await connection
+            .QueryFirstOrDefaultAsync<Domain.Entities.Book>(query, new
+            {
+                bookId
+            });
     }
 
-    public Task UpdateBookAsync(Domain.Entities.Book book)
+    public async Task UpdateBookAsync(Domain.Entities.Book book)
     {
-        throw new NotImplementedException();
+        const string query = @"UPDATE [dbo].[Books] 
+            SET [Title] = @Title, [Author] = @Author, [Genre] = @Genre 
+            WHERE Id = @Id";
+
+        using IDbConnection connection = _dbConnectionFactory.GetConnection();
+
+        await connection.ExecuteAsync(query, book);
     }
 }
