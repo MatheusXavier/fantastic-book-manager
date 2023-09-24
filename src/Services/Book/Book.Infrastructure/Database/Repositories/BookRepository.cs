@@ -27,6 +27,16 @@ public class BookRepository : IBookRepository
         await connection.ExecuteAsync(query, book);
     }
 
+    public Task<bool> BookExistsAsync(Guid bookId, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteBookAsync(Guid bookId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<int> GetBooksCountByTitleAsync(string title, Guid userId)
     {
         const string query = @"

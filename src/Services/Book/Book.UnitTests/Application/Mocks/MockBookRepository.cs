@@ -23,4 +23,20 @@ public class MockBookRepository : Mock<IBookRepository>
 
         return this;
     }
+
+    public MockBookRepository MockBookExistsAsync(Guid bookId, Guid userId, bool result)
+    {
+        Setup(s => s.BookExistsAsync(bookId, userId))
+            .ReturnsAsync(result);
+
+        return this;
+    }
+
+    public MockBookRepository MockDeleteBookAsync(Guid bookId)
+    {
+        Setup(s => s.DeleteBookAsync(bookId))
+            .Returns(Task.CompletedTask);
+
+        return this;
+    }
 }
