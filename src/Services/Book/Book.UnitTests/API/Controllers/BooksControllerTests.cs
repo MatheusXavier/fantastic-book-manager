@@ -2,6 +2,8 @@
 using Book.Application.Books.Commands.CreateBook;
 using Book.Application.Books.Commands.DeleteBook;
 using Book.Application.Books.Commands.UpdateBook;
+using Book.Application.Books.Models;
+using Book.Application.Books.Queries;
 using Book.Domain.Results;
 using Book.UnitTests.Application.Mocks;
 using Book.UnitTests.Infrastructure.Mocks;
@@ -22,6 +24,33 @@ public class BooksControllerTests
         _mediatorHandler = new();
         _errorHandler = new();
         _bookController = new(_mediatorHandler.Object, _errorHandler.Object);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_FindBooks_ReturnThem()
+    {
+        // Arrange
+        var query = new GetBooksQuery();
+        var books = new List<BookDto>()
+        {
+            new BookDto(Guid.NewGuid(), "Title One", "Author One", "Genre One"),
+            new BookDto(Guid.NewGuid(), "Title Two", "Author Two", "Genre Two"),
+        };
+
+        _mediatorHandler
+            .MockSend(query, books);
+
+        // Act
+        IActionResult result = await _bookController.GetBooksAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(new ObjectResult(books)
+        {
+            StatusCode = StatusCodes.Status200OK
+        });
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
     }
 
     [Fact]
@@ -73,6 +102,51 @@ public class BooksControllerTests
 
         // Assert
         result.Should().BeEquivalentTo(new OkResult());
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task GetBookDetailsAsync_BookNotFound_ReturnNotFound()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var query = new GetBookQuery(bookId);
+        BookDto? book = null;
+
+        _mediatorHandler
+            .MockSend(query, book);
+
+        // Act
+        IActionResult result = await _bookController.GetBookDetailsAsync(bookId);
+
+        // Assert
+        result.Should().BeEquivalentTo(new NotFoundResult());
+
+        _errorHandler.VerifyAll();
+        _mediatorHandler.VerifyAll();
+    }
+
+    [Fact]
+    public async Task GetBookDetailsAsync_FoundBook_ReturnIt()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var query = new GetBookQuery(bookId);
+        var book = new BookDto(bookId, "Tile", "Author", "Genre");
+
+        _mediatorHandler
+            .MockSend(query, book);
+
+        // Act
+        IActionResult result = await _bookController.GetBookDetailsAsync(bookId);
+
+        // Assert
+        result.Should().BeEquivalentTo(new ObjectResult(book)
+        {
+            StatusCode = StatusCodes.Status200OK
+        });
 
         _errorHandler.VerifyAll();
         _mediatorHandler.VerifyAll();

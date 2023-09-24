@@ -1,6 +1,8 @@
 ﻿using Book.Application.Books.Commands.CreateBook;
 using Book.Application.Books.Commands.DeleteBook;
 using Book.Application.Books.Commands.UpdateBook;
+using Book.Application.Books.Models;
+using Book.Application.Books.Queries;
 using Book.Application.Interfaces;
 using Book.Domain.Results;
 
@@ -19,6 +21,12 @@ public class BooksController : MainController
         _mediatorHandler = mediatorHandler;
     }
 
+    [HttpGet("api/v1/books")]
+    public async Task<IActionResult> GetBooksAsync()
+    {
+        return Ok(await _mediatorHandler.Send(new GetBooksQuery()));
+    }
+
     [HttpPost("api/v1/books")]
     public async Task<IActionResult> CreateBookAsync(CreateBookCommand command)
     {
@@ -30,6 +38,19 @@ public class BooksController : MainController
         }
 
         return Error();
+    }
+
+    [HttpGet("api/v1/books/{bookId}")]
+    public async Task<IActionResult> GetBookDetailsAsync(Guid bookId)
+    {
+        BookDto? book = await _mediatorHandler.Send(new GetBookQuery(bookId));
+
+        if (book is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(book);
     }
 
     [HttpPut("api/v1/books/{bookId}")]

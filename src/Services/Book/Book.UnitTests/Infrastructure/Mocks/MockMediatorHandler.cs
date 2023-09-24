@@ -18,4 +18,15 @@ public class MockMediatorHandler : Mock<IMediatorHandler>
 
         return this;
     }
+
+    public MockMediatorHandler MockSend<TResponse>(
+        BaseQuery<TResponse> request,
+        TResponse response,
+        CancellationToken cancellationToken = default)
+    {
+        Setup(s => s.Send(request, cancellationToken))
+            .ReturnsAsync(response);
+
+        return this;
+    }
 }

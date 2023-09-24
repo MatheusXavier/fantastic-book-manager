@@ -1,4 +1,5 @@
 ﻿using Book.Application.Books.Models;
+using Book.Application.Books.Queries;
 using Book.UnitTests.Application.Mocks;
 
 namespace Book.UnitTests.Application.Books.Queries;

@@ -4,7 +4,7 @@ using Book.Domain.Common;
 
 using MediatR;
 
-namespace Book.UnitTests.Application.Books.Queries;
+namespace Book.Application.Books.Queries;
 
 public record GetBooksQuery : BaseQuery<List<BookDto>>;
 

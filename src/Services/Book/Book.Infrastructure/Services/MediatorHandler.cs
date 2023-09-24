@@ -21,4 +21,12 @@ public class MediatorHandler : IMediatorHandler
         cancellationToken.ThrowIfCancellationRequested();
         await _mediator.Send(request, cancellationToken);
     }
+
+    public async Task<TResponse> Send<TResponse>(
+        BaseQuery<TResponse> request,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await _mediator.Send(request, cancellationToken);
+    }
 }
