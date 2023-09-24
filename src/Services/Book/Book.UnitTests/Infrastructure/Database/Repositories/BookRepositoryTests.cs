@@ -1,4 +1,5 @@
-﻿using Book.Application.Interfaces;
+﻿using Book.Application.Books.Models;
+using Book.Application.Interfaces;
 using Book.Infrastructure.Database.Repositories;
 
 using Dapper;
@@ -245,5 +246,75 @@ public class BookRepositoryTests : BaseRepositoryTests
         foundedBook.Title.Should().Be("New Title");
         foundedBook.Author.Should().Be("New Author");
         foundedBook.Genre.Should().Be("New Genre");
+    }
+
+    [Fact]
+    public async Task GetBooksByUserAsync_WithExistentBooks_ReturnBooks()
+    {
+        var userId = Guid.NewGuid();
+
+        var bookOne = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId,
+            title: "Book title one",
+            author: "Book author one",
+            genre: "Book genre one");
+
+        var bookTwo = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId,
+            title: "Book title two",
+            author: "Book author two",
+            genre: "Book genre two");
+
+        await _bookRepository.AddBookAsync(bookOne);
+        await _bookRepository.AddBookAsync(bookTwo);
+
+        // Act
+        List<BookDto> books = await _bookRepository.GetBooksByUserAsync(userId);
+
+        // Assert
+        var expectedBooks = new List<Book.Domain.Entities.Book> { bookOne, bookTwo }
+            .Select(b => new BookDto(b.Id, b.Title, b.Author, b.Genre))
+            .OrderBy(b => b.Title)
+            .ToList();
+
+        books.Should().BeEquivalentTo(expectedBooks);
+    }
+
+    [Fact]
+    public async Task GetBookDetailsAsync_WithInexistentBook_ReturnNull()
+    {
+        // Arrange
+        var bookId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+
+        // Act
+        BookDto book = await _bookRepository.GetBookDetailsAsync(bookId, userId);
+
+        // Assert
+        book.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetBookDetailsAsync_WithExistentBook_ReturnNull()
+    {
+        var book = new Book.Domain.Entities.Book(
+            id: Guid.NewGuid(),
+            userId: Guid.NewGuid(),
+            title: "Book title",
+            author: "Book author",
+            genre: "Book genre");
+
+        await _bookRepository.AddBookAsync(book);
+
+        // Act
+        BookDto? foundedBook = await _bookRepository.GetBookDetailsAsync(book.Id, book.UserId);
+
+        // Assert
+        foundedBook.Should().NotBeNull();
+        foundedBook?.Title.Should().Be(book.Title);
+        foundedBook?.Author.Should().Be(book.Author);
+        foundedBook?.Genre.Should().Be(book.Genre);
     }
 }

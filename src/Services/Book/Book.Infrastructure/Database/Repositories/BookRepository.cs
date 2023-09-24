@@ -97,13 +97,37 @@ public class BookRepository : IBookRepository
         await connection.ExecuteAsync(query, book);
     }
 
-    public Task<List<BookDto>> GetBooksByUserAsync(Guid userId)
+    public async Task<List<BookDto>> GetBooksByUserAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        const string query = @"SELECT Id, Title, Author, Genre 
+            FROM [dbo].[Books] 
+            WHERE [UserId] = @userId
+            ORDER BY [Title]";
+
+        using IDbConnection connection = _dbConnectionFactory.GetConnection();
+
+        IEnumerable<BookDto> books = await connection.QueryAsync<BookDto>(query, new
+        {
+            userId
+        });
+
+        return books.AsList();
     }
 
-    public Task<BookDto> GetBookDetailsAsync(Guid bookId, Guid userId)
+    public async Task<BookDto> GetBookDetailsAsync(Guid bookId, Guid userId)
     {
-        throw new NotImplementedException();
+        const string query = @"SELECT Id, Title, Author, Genre 
+            FROM [dbo].[Books] 
+            WHERE [Id] = @bookId
+              AND [UserId] = @userId";
+
+        using IDbConnection connection = _dbConnectionFactory.GetConnection();
+
+        return await connection
+            .QueryFirstOrDefaultAsync<BookDto>(query, new
+            {
+                bookId,
+                userId
+            });
     }
 }
