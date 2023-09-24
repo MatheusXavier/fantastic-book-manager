@@ -64,4 +64,12 @@ public class MockBookRepository : Mock<IBookRepository>
 
         return this;
     }
+
+    public MockBookRepository MockGetBookDetailsAsync(Guid bookId, Guid userId, BookDto? book)
+    {
+        Setup(s => s.GetBookDetailsAsync(bookId, userId))
+            .ReturnsAsync(book);
+
+        return this;
+    }
 }

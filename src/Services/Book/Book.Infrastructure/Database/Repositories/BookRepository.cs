@@ -101,4 +101,9 @@ public class BookRepository : IBookRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<BookDto> GetBookDetailsAsync(Guid bookId, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
 }

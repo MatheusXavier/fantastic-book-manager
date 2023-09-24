@@ -17,4 +17,6 @@ public interface IBookRepository
     Task UpdateBookAsync(Domain.Entities.Book book);
 
     Task<List<BookDto>> GetBooksByUserAsync(Guid userId);
+
+    Task<BookDto> GetBookDetailsAsync(Guid bookId, Guid userId);
 }
