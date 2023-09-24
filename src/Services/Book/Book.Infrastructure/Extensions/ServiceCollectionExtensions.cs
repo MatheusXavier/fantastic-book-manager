@@ -2,6 +2,7 @@
 using Book.Infrastructure.Behavior;
 using Book.Infrastructure.Database.Factories;
 using Book.Infrastructure.Database.Repositories;
+using Book.Infrastructure.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +14,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddRepositories()
-            .AddBehaviors();
+            .AddBehaviors()
+            .AddServices();
     }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
@@ -27,5 +29,11 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IErrorHandler, ErrorHandler>();
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IMediatorHandler, MediatorHandler>();
     }
 }

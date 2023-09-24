@@ -24,4 +24,20 @@ public class MockErrorHandler : Mock<IErrorHandler>
 
         return this;
     }
+
+    public MockErrorHandler MockHasError(bool output)
+    {
+        Setup(s => s.HasError())
+            .Returns(output);
+
+        return this;
+    }
+
+    public MockErrorHandler MockGetError(ErrorResult output)
+    {
+        Setup(s => s.GetError())
+            .Returns(output);
+
+        return this;
+    }
 }

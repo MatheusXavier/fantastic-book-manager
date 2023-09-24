@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Book.API.Identity;
+using Book.Application.Interfaces;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -67,5 +70,12 @@ public static class ServiceCollenctionExtensions
             });
 
         return services;
+    }
+
+    public static IServiceCollection AddIdentityUser(this IServiceCollection services)
+    {
+        return services
+            .AddHttpContextAccessor()
+            .AddScoped<ILoggedUser, LoggedUser>();
     }
 }
