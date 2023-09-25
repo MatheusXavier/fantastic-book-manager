@@ -10,9 +10,9 @@ ensure that the user information is stored in the database
 - Data layer & Business logic layer
 
 # Summary
-- [Getting Started](#getting-started)
 - [User Story](#user-story)
 - [Technologies](#technologies)
+- [Getting Started](#getting-started)
 - [Taken decisions](#taken-decisions)
 - [Architecture overview](#architecture-overview)
 
