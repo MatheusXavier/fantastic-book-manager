@@ -10,6 +10,7 @@ ensure that the user information is stored in the database
 - Data layer & Business logic layer
 
 # Summary
+- [Getting Started](#getting-started)
 - [User Story](#user-story)
 - [Technologies](#technologies)
 - [Taken decisions](#taken-decisions)
@@ -44,6 +45,16 @@ Users should be able to view a list of all their books, with book **title**, **a
 * [ASP.NET Core Identity](https://github.com/dotnet/AspNetCore/tree/main/src/Identity) through [NetDevPack.Identity](https://github.com/NetDevPack/Security.Identity)
 * [Dapper](https://github.com/DapperLib/Dapper) & [DbUp](https://github.com/DbUp/DbUp)
 * [xUnit](https://github.com/xunit/xunit), [NetArchTest.Rules](https://github.com/BenMorris/NetArchTest), [Moq](https://github.com/moq) & [FluentAssertions](https://github.com/fluentassertions/fluentassertions)
+
+# Getting Started
+
+**Fantastic Book Manager** uses docker, so after cloning the repository just go to the `src` folder and run the command `docker-compose up --build`, then you will be able to access:
+```
+Identity API - https://localhost:14006/swagger
+Book API - https://localhost:13006/swagger
+```
+
+You can also open the `BookManager.Services.sln` solution using **Visual Studio**, if the `docker-compose` project is not your "by default startup project", right click on the **docker-compose** node and select the "Set as Startup Project" menu option, then you will be able to build and run the whole solution into Docker by simple hitting `F5`.
 
 # Taken decisions
 * [Entity Framework](#entity-framework)
