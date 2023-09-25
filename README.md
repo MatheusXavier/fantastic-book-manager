@@ -53,6 +53,7 @@ Users should be able to view a list of all their books, with book **title**, **a
 * [Command–query separation (CQS)](#command–query-separation-cqs)
 * [Validations](#validations)
 * [Error handling](#error-handling)
+* [Unit tests](#unit-tests)
 
 ## Entity Framework
 One of the [requirements](#fantastic-book-manager) was to not use the Entity Framework, so [Dapper](https://github.com/DapperLib/Dapper) was used, which has performance as one of its main features and allows us to write queries in raw SQL, but some tool would still be needed to manage changes to the database, so [DbUp](https://github.com/DbUp/DbUp) was chosen, allowing us to write changes to the database in SQL Scripts and [DbUp](https://github.com/DbUp/DbUp) tracks which SQL scripts have already been executed and executes the change scripts necessary to update our database.
