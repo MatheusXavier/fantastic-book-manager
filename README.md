@@ -51,6 +51,8 @@ Users should be able to view a list of all their books, with book **title**, **a
 * [Using NetDevPack.Identity](#using-netdevpackidentity)
 * [Separation of Book and Identity API](#separation-of-book-and-identity-api)
 * [Command–query separation (CQS)](#command–query-separation-cqs)
+* [Validations](#validations)
+* [Error handling](#error-handling)
 
 ## Entity Framework
 One of the [requirements](#fantastic-book-manager) was to not use the Entity Framework, so [Dapper](https://github.com/DapperLib/Dapper) was used, which has performance as one of its main features and allows us to write queries in raw SQL, but some tool would still be needed to manage changes to the database, so [DbUp](https://github.com/DbUp/DbUp) was chosen, allowing us to write changes to the database in SQL Scripts and [DbUp](https://github.com/DbUp/DbUp) tracks which SQL scripts have already been executed and executes the change scripts necessary to update our database.
@@ -83,6 +85,32 @@ The [controller-service-repository](https://tom-collings.medium.com/controller-s
 Adopting the [CQS (command-query separation)](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation) principle also makes it much easier to start working with [events](https://en.wikipedia.org/wiki/Event-driven_architecture), which can be extremely useful in scale scenarios and distributed systems.
 
 By separating the commands from the queries we have very well defined rules where it is clear that the commands will make changes to our database and that the queries will only read information without causing any changes, this allows a much more smoodie adoption of the [CQRS](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation), allowing queries to search for information from another database, which can be extremely useful in a scale scenario.
+
+## Validations
+The commands are clear intentions to change our system that receive information directly from our users, bringing the possibility of containing invalid information, for this reason each command has a validation class that follows the **CommandNameValidator** pattern (_CreateBookCommandValidator_), the validation classes are responsible for validate inputed data which are simpler validations and we are using [FluentValidation](https://fluentvalidation.net/) for this.
+
+[Domain-driven design (DDD)](https://en.wikipedia.org/wiki/Domain-driven_design) brings some interesting patterns, one of them is that our business entities must always be valid, this basically means that any change that occurs making our business model invalid must be blocked, **so even not using DDD** we are following this pattern to ensure that there is no change that makes our business model invalid, to do that we adopted [GuardClauses](https://github.com/ardalis/GuardClauses) which checks for invalid inputs up front and immediately failing if any are found.
+
+## Error handling
+Unwanted behavior can occur in our application at any time, such as the user trying to enter incorrect data or trying to perform an invalid operation. This means that our application has to validate these behaviors as described in the [validations topic](#validations), but there is an important point: **If this validation is not successful, how can I return this information to the user?** We adopted `IErrorHandler`, which is a service responsible for receiving all operation errors. It is a common interface for our [application layer](#application-layer) and also for the [presentation layer](#presentation-layer), allowing us to send a command and then verify the success of this operation through it.
+
+## Unit tests
+As described in the architecture overview part, we have 4 layers and we are performing unit tests for all of them.
+
+### Domain
+Business entities are responsible for changing their own information, these changes are being tested using unit tests.
+
+### Application
+Using unit tests to test command validations, ensuring that they are validating the command correctly, in addition to properly testing the command handler, ensuring that everything is working as it should in addition to serving as documentation for the code.
+
+### Infrastructure
+The infrastructure layer is basically responsible for accessing the data, we also have unit tests for each method that accesses the database, this ensures that the SQL database queries are working as they should, so the SQL database query is really hitting the database, however we are using the concept of transaction, this means that all data written during the tests is removed at the end.
+
+### Presentation
+The presentation layer, which in our case has our REST API, is very simple, but the controller methods are responsible for calling correct commands and verifying the success of the operation, to guarantee that we are also using unit tests.
+
+### Architecture
+We adopted unit tests in all layers of our application, in addition, written using [NetArchTest.Rules](https://github.com/BenMorris/NetArchTest) to enforce architectural rules in unit tests.
 
 # Architecture overview
 The Book API was developed using clean architecture principles.
