@@ -116,7 +116,7 @@ Business entities are responsible for changing their own information, these chan
 Using unit tests to test command validations, ensuring that they are validating the command correctly, in addition to properly testing the command handler, ensuring that everything is working as it should in addition to serving as documentation for the code.
 
 ### Infrastructure
-The infrastructure layer is basically responsible for accessing the data, we also have unit tests for each method that accesses the database, this ensures that the SQL database queries are working as they should, so the SQL database query is really hitting the database, however we are using the concept of transaction, this means that all data written during the tests is removed at the end.
+The infrastructure layer is basically responsible for accessing the data (in our current scenario), we also have unit tests for each method that accesses the database, this ensures that the SQL database queries are working as they should, so the SQL database query is really hitting the database, however we are using the concept of transaction, this means that all data written during the tests is removed at the end.
 
 ### Presentation
 The presentation layer, which in our case has our REST API, is very simple, but the controller methods are responsible for calling correct commands and verifying the success of the operation, to guarantee that we are also using unit tests.
